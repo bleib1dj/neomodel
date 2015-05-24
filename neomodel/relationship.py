@@ -55,8 +55,6 @@ class StructuredRel(StructuredRelBase):
     def inflate(cls, rel):
         props = {}
         for key, prop in cls.defined_properties(aliases=False, rels=False).items():
-            if rel is None:
-                break
             if key in rel.properties:
                 props[key] = prop.inflate(rel.properties[key], obj=rel)
             elif prop.has_default:
@@ -64,7 +62,7 @@ class StructuredRel(StructuredRelBase):
             else:
                 props[key] = None
         srel = cls(**props)
-        srel._start_node_id = rel._start_node_id
-        srel._end_node_id = rel._end_node_id
+        srel._start_node_id = rel.start_node._id
+        srel._end_node_id = rel.end_node._id
         srel._id = rel._id
         return srel
