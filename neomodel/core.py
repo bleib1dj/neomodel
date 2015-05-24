@@ -44,8 +44,6 @@ class NodeMeta(type):
                 inst.__label__ = inst.__name__
 
             install_labels(inst)
-            from .index import NodeIndexManager
-            inst.index = NodeIndexManager(inst, inst.__label__)
         return inst
 
 
@@ -93,11 +91,6 @@ class StructuredNode(NodeBase):
     def inherited_labels(cls):
         return [scls.__label__ for scls in cls.mro()
                 if hasattr(scls, '__label__') and not hasattr(scls, '__abstract_node__')]
-
-    @classmethod
-    @deprecated("Category nodes are now deprecated, the functionality is emulated using labels")
-    def category(cls):
-        return FakeCategory(cls)
 
     @hooks
     def save(self):
@@ -160,7 +153,7 @@ class StructuredNode(NodeBase):
         query += "RETURN "
         query += ", ".join(["n" + str(i) for i in range(0, len(deflated))])
 
-        results, meta = db.cypher_query(query, params)
+        results = db.cypher_query(query, params)
 
         if hasattr(cls, 'post_create'):
             for node in results:
@@ -172,8 +165,8 @@ class StructuredNode(NodeBase):
     def inflate(cls, node):
         props = {}
         for key, prop in cls.defined_properties(aliases=False, rels=False).items():
-            if key in node._properties:
-                props[key] = prop.inflate(node._properties[key], node)
+            if key in node.properties:
+                props[key] = prop.inflate(node.properties[key], node)
             elif prop.has_default:
                 props[key] = prop.default_value()
             else:
@@ -182,55 +175,3 @@ class StructuredNode(NodeBase):
         snode = cls(**props)
         snode._id = node._id
         return snode
-
-
-class FakeCategory(object):
-    """
-    Category nodes are no longer required with the introduction of labels.
-    This class behaves like the old category nodes used in earlier version of neomodel
-    but uses labels under the hood calling the traversal api.
-    """
-    def __init__(self, cls):
-        self.instance = FakeInstanceRel(cls)
-
-    def cypher(self, *args, **kwargs):
-        raise NotImplemented("cypher method on category nodes no longer supported")
-
-
-class FakeInstanceRel(object):
-    """
-    Fake rel manager for our fake category node
-    """
-    def __init__(self, cls):
-        from .match import NodeSet
-        self._node_set = NodeSet(cls)
-
-    def __len__(self):
-        return self._node_set.query_cls(self._node_set)._count()
-
-    def __bool__(self):
-        return len(self) > 0
-
-    def __nonzero__(self):
-        return len(self) > 0
-
-    def count(self):
-        return self.__len__()
-
-    def all(self):
-        return self._node_set.all()
-
-    def search(self, **kwargs):
-        ns = self._node_set
-        for field, value in kwargs.items():
-            ns.filter(**{field: value})
-        return self._node_set.all()
-
-    def get(self, **kwargs):
-        result = self.search(**kwargs)
-        if len(result) == 1:
-            return result[0]
-        if len(result) > 1:
-            raise Exception("Multiple items returned, use search?")
-        if not result:
-            raise DoesNotExist("No items exist for the specified arguments")

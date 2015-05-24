@@ -1,5 +1,4 @@
 from .. import RelationshipTo, StructuredNode, StringProperty
-from ..index import NodeIndexManager
 
 
 class Locale(StructuredNode):
@@ -15,21 +14,6 @@ class Locale(StructuredNode):
     @classmethod
     def get(cls, code):
         return Locale.nodes.get(code=code)
-
-
-class LocalisedIndexManager(NodeIndexManager):
-    """ Only return results in current locale """
-    def __init__(self, locale_code, *args, **kwargs):
-        super(LocalisedIndexManager, self).__init__(*args, **kwargs)
-        self.locale_code = locale_code
-
-    def _build_query(self, params):
-        q = super(LocalisedIndexManager, self)._build_query(params)
-        q += " MATCH (n)-[:LANGUAGE]->(lang:Locale)"
-        q += " USING INDEX lang:Locale(code)"
-        q += " WHERE lang.code = {_locale_code}"
-        params['_locale_code'] = self.locale_code
-        return q
 
 
 class Localised(object):
@@ -51,7 +35,3 @@ class Localised(object):
 
     def has_locale(self, lang):
         return self.locales.is_connected(Locale.get(lang))
-
-    @classmethod
-    def locale_index(cls, code):
-        return LocalisedIndexManager(code, cls, cls.__name__)

@@ -282,7 +282,7 @@ class QueryBuilder(object):
     def _count(self):
         self._ast['return'] = 'count({})'.format(self._ast['return'])
         query = self.build_query()
-        results, _ = db.cypher_query(query, self._query_params)
+        results = db.cypher_query(query, self._query_params)
         return int(results[0][0])
 
     def _contains(self, node_id):
@@ -295,7 +295,7 @@ class QueryBuilder(object):
 
     def _execute(self):
         query = self.build_query()
-        results, _ = db.cypher_query(query, self._query_params)
+        results = db.cypher_query(query, self._query_params)
         if results:
             return [self._ast['result_class'].inflate(n[0]) for n in results]
         return []
