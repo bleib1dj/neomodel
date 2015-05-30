@@ -72,6 +72,7 @@ class RelationshipManager(Traversal):
 
     @check_source
     def connect(self, obj, properties=None):
+        logger.critical("start")
         logger.critical(obj)
         self._check_node(obj)
 
