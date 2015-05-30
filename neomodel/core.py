@@ -153,7 +153,7 @@ class StructuredNode(NodeBase):
         query += "RETURN "
         query += ", ".join(["n" + str(i) for i in range(0, len(deflated))])
 
-        results = db.cypher_query(query, params)
+        results, _ = db.cypher_query(query, params)
 
         if hasattr(cls, 'post_create'):
             for node in results:
