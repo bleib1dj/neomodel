@@ -33,7 +33,6 @@ class StructuredRel(StructuredRelBase):
         query = "START r=relationship({self})"
         for key in props:
             query += " SET r.{} = {{{}}}".format(key, key)
-        props['self'] = self._id
 
         db.cypher_query(query, props)
 
