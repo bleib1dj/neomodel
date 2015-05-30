@@ -5,7 +5,7 @@ import warnings
 import sys
 from threading import local
 from py2neo import authenticate, Graph, Resource
-from py2neo.cypher import CypherTransaction, CypherResource, RecordList
+from py2neo.cypher import CypherTransaction, CypherResource, RecordList, CypherTransactionError
 from py2neo.cypher.core import RecordProducer
 from py2neo.packages.httpstream.packages.urimagic import URI
 from py2neo.cypher.error import ClientError
@@ -201,6 +201,9 @@ class Database(local):
             if (handle_unique and e.message and " already exists with label " in e.message
                     and e.message.startswith('Node ')):
                 raise UniqueProperty(e.message)
+
+            if isinstance(e, ClientError):
+                raise CypherTransactionError(message=e.message, code=e.code)
 
             if isinstance(e, TransactionError):
                 raise CypherException(query, params, e.message, e.java_exception, e.java_trace)
