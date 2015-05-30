@@ -203,7 +203,7 @@ class Database(local):
                 raise UniqueProperty(e.message)
 
             if isinstance(e, ClientError):
-                raise CypherTransactionError(message=e.message, code=e.code)
+                raise e
 
             if isinstance(e, TransactionError):
                 raise CypherException(query, params, e.message, e.java_exception, e.java_trace)
