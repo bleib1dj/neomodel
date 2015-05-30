@@ -1,5 +1,9 @@
+import logging
 from .properties import Property, PropertyManager
 from .core import db
+
+logger = logging.getLogger("neomodel.util")
+
 
 class RelationshipMeta(type):
     def __new__(mcs, name, bases, dct):
@@ -53,6 +57,7 @@ class StructuredRel(StructuredRelBase):
     @classmethod
     def inflate(cls, rel):
         props = {}
+        logger.critical(rel._properties)
         for key, prop in cls.defined_properties(aliases=False, rels=False).items():
             if key in rel._properties:
                 props[key] = prop.inflate(rel._properties[key], obj=rel)
