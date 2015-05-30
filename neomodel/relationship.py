@@ -33,8 +33,8 @@ class StructuredRel(StructuredRelBase):
         query = "START r=relationship({self})"
         for key in props:
             query += " SET r.{} = {{{}}}".format(key, key)
-        logger.critical(query)
-        logger.critical(props)
+        props['self'] = self._id
+
         db.cypher_query(query, props)
 
         return self
@@ -63,10 +63,13 @@ class StructuredRel(StructuredRelBase):
             logger.critical(rel)
             logger.critical(cls)
             if key in rel:
-                props[key] = prop.inflate(key, obj=rel)
+                props[key] = prop.inflate(rel[key], obj=rel)
             elif prop.has_default:
                 props[key] = prop.default_value()
             else:
                 props[key] = None
         srel = cls(**props)
+        srel._start_node_id = rel.start_node._id
+        srel._end_node_id = rel.end_node._id
+        srel._id = rel._id
         return srel

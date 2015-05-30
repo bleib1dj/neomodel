@@ -97,7 +97,7 @@ class RelationshipManager(Traversal):
             params['place_holder_' + p] = v
             q += " SET r." + p + " = {place_holder_" + p + "}"
         logger.critical(q + " RETURN r", params)
-        rel_ = self.source.cypher(q + " RETURN r", params)
+        rel_ = self.source.cypher(q + " RETURN r", params)[0][0]
         logger.critical(rel_)
         rel_instance = self._set_start_end_cls(rel_model.inflate(rel_), obj)
         self.source.cypher(q, params)
