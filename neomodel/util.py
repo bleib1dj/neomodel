@@ -213,7 +213,7 @@ class Database(local):
         if os.environ.get('NEOMODEL_CYPHER_DEBUG', False):
             logger.debug("query: " + query + "\nparams: " + repr(params) + "\ntook: %.2gs\n" % (end - start))
 
-        return results, results.columns
+        return results
 
 
 def deprecated(message):
