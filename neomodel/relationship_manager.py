@@ -1,4 +1,3 @@
-import logging
 import sys
 import functools
 from importlib import import_module
@@ -6,7 +5,6 @@ from .exception import DoesNotExist, NotConnected
 from .util import deprecated
 from .match import OUTGOING, INCOMING, EITHER, rel_helper, Traversal
 
-logger = logging.getLogger("neomodel.util")
 
 # check source node is saved and not deleted
 def check_source(fn):
@@ -72,8 +70,6 @@ class RelationshipManager(Traversal):
 
     @check_source
     def connect(self, obj, properties=None):
-        logger.critical("start")
-        logger.critical(obj)
         self._check_node(obj)
 
         if not self.definition['model'] and properties:
@@ -96,9 +92,7 @@ class RelationshipManager(Traversal):
         for p, v in rel_model.deflate(tmp.__properties__).items():
             params['place_holder_' + p] = v
             q += " SET r." + p + " = {place_holder_" + p + "}"
-        logger.critical(q + " RETURN r", params)
         rel_ = self.source.cypher(q + " RETURN r", params)[0][0]
-        logger.critical(rel_)
         rel_instance = self._set_start_end_cls(rel_model.inflate(rel_), obj)
         self.source.cypher(q, params)
         return rel_instance
