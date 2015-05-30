@@ -6,7 +6,7 @@ from .util import deprecated
 from .match import OUTGOING, INCOMING, EITHER, rel_helper, Traversal
 
 
-# check sorce node is saved and not deleted
+# check source node is saved and not deleted
 def check_source(fn):
     fn_name = fn.func_name if hasattr(fn, 'func_name') else fn.__name__
 
@@ -77,6 +77,7 @@ class RelationshipManager(Traversal):
                     "using a relationship model is no longer supported")
 
         new_rel = rel_helper(lhs='us', rhs='them', ident='r', **self.definition)
+        # TODO "MATCH them:node({them}), us:node({self}) CREATE UNIQUE"
         q = "START them=node({them}), us=node({self}) CREATE UNIQUE" + new_rel
         params = {'them': obj._id}
 
@@ -91,7 +92,6 @@ class RelationshipManager(Traversal):
         for p, v in rel_model.deflate(tmp.__properties__).items():
             params['place_holder_' + p] = v
             q += " SET r." + p + " = {place_holder_" + p + "}"
-
         rel_ = self.source.cypher(q + " RETURN r", params)[0][0][0]
         rel_instance = self._set_start_end_cls(rel_model.inflate(rel_), obj)
         self.source.cypher(q, params)
