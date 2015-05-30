@@ -59,6 +59,9 @@ class StructuredRel(StructuredRelBase):
         props = {}
         logger.critical(cls.defined_properties(aliases=False, rels=False).items())
         for key, prop in cls.defined_properties(aliases=False, rels=False).items():
+            logger.critical(key)
+            logger.critical(rel)
+            logger.critical(cls)
             if key in rel:
                 props[key] = prop.inflate(rel[key], obj=rel)
             elif prop.has_default:
