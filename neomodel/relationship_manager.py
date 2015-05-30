@@ -92,7 +92,7 @@ class RelationshipManager(Traversal):
         for p, v in rel_model.deflate(tmp.__properties__).items():
             params['place_holder_' + p] = v
             q += " SET r." + p + " = {place_holder_" + p + "}"
-        rel_ = self.source.cypher(q + " RETURN r", params)[0][0]
+        rel_ = self.source.cypher(q + " RETURN r", params)[0][0][0]
         rel_instance = self._set_start_end_cls(rel_model.inflate(rel_), obj)
         self.source.cypher(q, params)
         return rel_instance
