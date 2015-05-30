@@ -81,6 +81,7 @@ class RelationshipManager(Traversal):
                     "using a relationship model is no longer supported")
 
         new_rel = rel_helper(lhs='us', rhs='them', ident='r', **self.definition)
+        # TODO "MATCH them:node({them}), us:node({self}) CREATE UNIQUE"
         q = "START them=node({them}), us=node({self}) CREATE UNIQUE" + new_rel
         params = {'them': obj._id}
 
@@ -96,7 +97,8 @@ class RelationshipManager(Traversal):
             params['place_holder_' + p] = v
             q += " SET r." + p + " = {place_holder_" + p + "}"
         logger.critical(q + " RETURN r", params)
-        rel_ = self.source.cypher(q + " RETURN r", params)[0][0][0]
+        rel_ = self.source.cypher(q + " RETURN r", params)
+        logger.critical(rel_)
         rel_instance = self._set_start_end_cls(rel_model.inflate(rel_), obj)
         self.source.cypher(q, params)
         return rel_instance
