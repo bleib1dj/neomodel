@@ -15,6 +15,10 @@ An Object Graph Mapper (OGM) for the neo4j_ graph database, built on the awesome
 .. image:: https://secure.travis-ci.org/robinedwards/neomodel.png
     :target: https://secure.travis-ci.org/robinedwards/neomodel/
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/robinedwards/neomodel
+   :target: https://gitter.im/robinedwards/neomodel?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 .. image:: https://pypip.in/d/neomodel/badge.png
     :target: https://pypi.python.org/pypi/neomodel/
     :alt: Downloads
@@ -63,8 +67,3 @@ Install neomodel for development and run the suite::
 
     $ python setup.py develop
     $ nosetests -s
-
-
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/robinedwards/neomodel
-   :target: https://gitter.im/robinedwards/neomodel?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
