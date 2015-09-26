@@ -198,7 +198,7 @@ class Database(local):
             if results:
                 return results, list(results.columns)
             else:
-                return [], None
+                return results, None
         else:
             if not hasattr(self, 'session'):
                 self.new_session()
